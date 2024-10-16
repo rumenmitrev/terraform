@@ -1,7 +1,7 @@
 # Local .terraform directories
 **/.terraform/*
 sens.auto.tfvars
-.terraform.lock.hcl
+# .terraform.lock.hcl
 
 # .tfstate files
 *.tfstate
