@@ -1,4 +1,5 @@
 # Local .terraform directories
+**/ibasi*
 **/.terraform/*
 sens.auto.tfvars
 # .terraform.lock.hcl

@@ -9,7 +9,16 @@ resource "github_repository" "ibasi" {
   description = "Test repo resource for terraform"
   visibility  = var.env == "dev" ? "private" : "public"
   auto_init   = true
-
+  provisioner "local-exec" {
+    command = "gh repo view ${self.name} --web"
+  }
+  provisioner "local-exec" {
+    command = "gh repo clone ${self.name}"
+  }
+  provisioner "local-exec" {
+    when = destroy
+    command = "rm -fr ${self.name} "
+  }
 }
 
 resource "github_repository_file" "readme" {
