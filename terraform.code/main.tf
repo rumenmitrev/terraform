@@ -4,7 +4,7 @@
 # }
 
 resource "github_repository" "ibasi" {
-  for_each       = toset(["infra","backend"])
+  for_each       = var.repos
   name        = "ibasi-${each.key}"
   description = "Test repo resource for terraform"
   visibility  = var.env == "dev" ? "private" : "public"
