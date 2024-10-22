@@ -14,20 +14,20 @@ variable "repo_max" {
 }
 
 variable "env" {
-  type = string
+  type        = string
   description = "environment"
   validation {
-    condition = contains (["dev", "prod"], var.env)
+    condition     = contains(["dev", "prod"], var.env)
     error_message = "choose envireonment 'dev'/'prod'"
   }
-  
+
 }
 
 variable "repos" {
-  type = set(string)
+  type        = map(map(string))
   description = "Repos"
   validation {
-    condition = length(var.repos) <= var.repo_max
+    condition     = length(var.repos) <= var.repo_max
     error_message = "Please do not deploy more reposs than ${var.repo_max}"
   }
 }
