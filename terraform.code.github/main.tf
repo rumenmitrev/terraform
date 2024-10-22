@@ -1,3 +1,4 @@
+
 # resource "random_id" "random" {
 #   byte_length = 2
 #   count       = var.counter
@@ -23,7 +24,7 @@ resource "github_repository" "ibasi" {
 }
 resource "terraform_data" "repo-clone" {
   for_each   = var.repos
-  depends_on = [github_repository_file.index, github_repository_file.readme]
+  depends_on = [github_repository_file.main, github_repository_file.readme]
   provisioner "local-exec" {
     command = "gh repo clone ${github_repository.ibasi[each.key].name}"
   }
@@ -35,17 +36,22 @@ resource "github_repository_file" "readme" {
   # repository = "ibasi"
   branch              = "main"
   file                = "README.md"
-  content             = "# This is a ${var.env} ${each.key}  repo for ${each.key} devs."
+  content             = templatefile("templates/readme.tftpl", {
+    env = var.env,
+    lang = each.value.lang,
+    repos = each.key,
+    authorname = data.github_user.current.name
+  })
   overwrite_on_create = true
-  lifecycle {
-    ignore_changes = [
-      content,
-    ]
+  # lifecycle {
+  #   ignore_changes = [
+  #     content,
+  #   ]
 
-  }
+  # }
 }
 
-resource "github_repository_file" "index" {
+resource "github_repository_file" "main" {
   for_each   = var.repos
   repository = github_repository.ibasi[each.key].name
   # repository = "ibasi"
@@ -60,8 +66,7 @@ resource "github_repository_file" "index" {
   }
 }
 
-output "repo_names" {
-  value       = { for i in github_repository.ibasi : i.name => [i.http_clone_url, i.ssh_clone_url] }
-  description = "repo names and url"
-  #sensitive = true
-}
+# moved {
+#   from = github_repository_file.index
+#   to = github_repository_file.main
+# }
