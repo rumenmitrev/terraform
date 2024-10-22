@@ -17,6 +17,9 @@ resource "github_repository" "ibasi" {
     when    = destroy
     command = "rm -fr ${self.name} "
   }
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
 }
 resource "terraform_data" "repo-clone" {
   for_each   = var.repos
@@ -34,6 +37,12 @@ resource "github_repository_file" "readme" {
   file                = "README.md"
   content             = "# This is a ${var.env} ${each.key}  repo for ${each.key} devs."
   overwrite_on_create = true
+  lifecycle {
+    ignore_changes = [
+      content,
+    ]
+
+  }
 }
 
 resource "github_repository_file" "index" {
@@ -44,10 +53,15 @@ resource "github_repository_file" "index" {
   file                = each.value.filename
   content             = "## Hello ${each.value.lang}"
   overwrite_on_create = true
+  lifecycle {
+    ignore_changes = [
+      content,
+    ]
+  }
 }
 
 output "repo_names" {
-  value       = { for i in github_repository.ibasi : i.name => [i.http_clone_url,i.ssh_clone_url] }
+  value       = { for i in github_repository.ibasi : i.name => [i.http_clone_url, i.ssh_clone_url] }
   description = "repo names and url"
   #sensitive = true
 }

@@ -10,8 +10,8 @@ repos = {
     lang     = "python",
     filename = "main.py"
   }
-#   frontend = {
-#     lang     = "javascript"
-#     filename = "main.js"
-#   }
+  #   frontend = {
+  #     lang     = "javascript"
+  #     filename = "main.js"
+  #   }
 }
