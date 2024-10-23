@@ -6,3 +6,9 @@ terraform {
     }
   }
 }
+
+# provider "github" {
+#   # Configuration options
+#   token = var.gh_token
+#   owner = "rumenmitrev"
+# }

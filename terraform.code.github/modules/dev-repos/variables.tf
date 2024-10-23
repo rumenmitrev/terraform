@@ -8,7 +8,7 @@ variable "repo_max" {
   default     = 1
 
   validation {
-    condition     = var.repo_max <= 5
+    condition     = var.repo_max <= 10
     error_message = "do not deploy more than 5 repos"
   }
 }
