@@ -23,5 +23,5 @@ module "repos" {
 }
 
 output "repo-info" {
-  value = 
+  value = {for k,v in module.repos : k => v }
 }
