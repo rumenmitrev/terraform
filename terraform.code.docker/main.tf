@@ -11,7 +11,8 @@ resource "random_string" "random" {
 # }
 
 module "image" {
-  source = "./modules/image"
+  source   = "./modules/image"
+  image_in = var.image[terraform.workspace]
 }
 
 resource "docker_container" "red_container" {
