@@ -2,6 +2,8 @@
 **/ibasi*
 **/.terraform/*
 sens.auto.tfvars
+**/*.tfvars*
+
 # .terraform.lock.hcl
 
 # .tfstate files
