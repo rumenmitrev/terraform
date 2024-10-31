@@ -10,27 +10,36 @@ resource "random_string" "random" {
 #   name = var.image[terraform.workspace]
 # }
 
+locals {
+  deployment = {
+    red = {
+      image = var.image["red_image"][terraform.workspace]
+    }
+    influx = {
+      image = var.image["influx_image"][terraform.workspace]
+    }
+  }
+}
+
 module "image" {
   source   = "./modules/image"
-  image_in = var.image[terraform.workspace]
+  for_each = local.deployment
+  image_in = each.value.image
 }
 
 module "container" {
-  depends_on        = [terraform_data.dockervol]
+  # depends_on        = [terraform_data.dockervol]
   source            = "./modules/container"
   count             = local.counter_lel
   name_in           = join("-", ["red", terraform.workspace, random_string.random[count.index].result])
-  image_in          = module.image.image_id
+  image_in          = module.image["red"].image_id
   internal_in       = var.int_port
   external_in       = var.ext_port[terraform.workspace][count.index]
   container_path_in = "/data"
-  host_path_in      = "${path.cwd}/nodered"
-
 }
 
-resource "terraform_data" "dockervol" {
-  provisioner "local-exec" {
-    command = "mkdir nodered/ || true &&  chown 1000:1000 nodered/"
-  }
-
-}
+# resource "terraform_data" "dockervol" {
+#   provisioner "local-exec" {
+#     command = "mkdir nodered/ || true &&  chown 1000:1000 nodered/"
+#   }
+# }

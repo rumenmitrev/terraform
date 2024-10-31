@@ -4,11 +4,17 @@
 # }
 
 variable "image" {
-  type        = map(string)
+  type        = map(map(string))
   description = "image for containers"
   default = {
-    dev  = "nodered/node-red:latest"
-    prod = "nodered/node-red:latest-minimal"
+    red_image = {
+      dev  = "nodered/node-red:latest"
+      prod = "nodered/node-red:latest-minimal"
+    }
+    influx_image = {
+      dev  = "quay.io/influxdb/influxdb:v2.0.2"
+      prod = "quay.io/influxdb/influxdb:v2.0.2"
+    }
   }
 
 }
