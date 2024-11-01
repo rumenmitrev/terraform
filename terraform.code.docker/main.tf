@@ -1,9 +1,3 @@
-resource "random_string" "random" {
-  count   = local.counter_lel
-  length  = 4
-  special = false
-  upper   = false
-}
 
 
 # resource "docker_image" "nodered_image" {
@@ -13,10 +7,18 @@ resource "random_string" "random" {
 locals {
   deployment = {
     red = {
-      image = var.image["red_image"][terraform.workspace]
+      container_count = length(var.ext_port["red"][terraform.workspace])
+      image           = var.image["red_image"][terraform.workspace]
+      ext             = var.ext_port["red"][terraform.workspace]
+      int             = 1880
+      container_path  = "/data"
     }
     influx = {
-      image = var.image["influx_image"][terraform.workspace]
+      container_count = length(var.ext_port["influx"][terraform.workspace])
+      image           = var.image["influx_image"][terraform.workspace]
+      ext             = var.ext_port["influx"][terraform.workspace]
+      int             = 8086
+      container_path  = "/var/lib/influxdb"
     }
   }
 }
@@ -29,13 +31,15 @@ module "image" {
 
 module "container" {
   # depends_on        = [terraform_data.dockervol]
-  source            = "./modules/container"
-  count             = local.counter_lel
-  name_in           = join("-", ["red", terraform.workspace, random_string.random[count.index].result])
-  image_in          = module.image["red"].image_id
-  internal_in       = var.int_port
-  external_in       = var.ext_port[terraform.workspace][count.index]
-  container_path_in = "/data"
+  source   = "./modules/container"
+  for_each = local.deployment
+
+  count_in          = each.value.container_count
+  name_in           = each.key
+  image_in          = module.image[each.key].image_id
+  internal_in       = each.value.int
+  external_in       = each.value.ext
+  container_path_in = each.value.container_path
 }
 
 # resource "terraform_data" "dockervol" {
