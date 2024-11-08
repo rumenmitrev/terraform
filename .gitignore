@@ -2,7 +2,7 @@
 **/ibasi*
 **/.terraform/*
 sens.auto.tfvars
-**/*.tfvars*
+#**/*.tfvars*
 
 # .terraform.lock.hcl
 
