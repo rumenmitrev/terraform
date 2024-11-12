@@ -17,12 +17,12 @@ module "container" {
   source   = "./modules/container"
   for_each = local.deployment
 
-  count_in          = each.value.container_count
-  name_in           = each.key
-  image_in          = module.image[each.key].image_id
-  internal_in       = each.value.int
-  external_in       = each.value.ext
-  container_path_in = each.value.container_path
+  count_in    = each.value.container_count
+  name_in     = each.key
+  image_in    = module.image[each.key].image_id
+  internal_in = each.value.int
+  external_in = each.value.ext
+  volumes_in  = each.value.volumes
 }
 
 # resource "terraform_data" "dockervol" {
