@@ -19,6 +19,14 @@ resource "docker_container" "container" {
     container_path = var.container_path_in
     volume_name = docker_volume.container_volume[count.index].name
   }
+  provisioner "local-exec" {
+    command = "echo ${self.name}:${self.network_data[0]["ip_address"]}:${self.ports[0].external} >> ${path.cwd}/../containers.txt"
+    when = create
+  }
+  provisioner "local-exec" {
+    command = "rm -f ${path.cwd}/../containers.txt"
+    when = destroy
+  }
 }
 
 resource "docker_volume" "container_volume" {
@@ -34,7 +42,7 @@ resource "docker_volume" "container_volume" {
   }
   provisioner "local-exec" {
     when = destroy
-    command = "sudo tar -czvf ${path.cwd}/../backup/${self.name} ${self.mountpoint}/"
-    on_failure = continue
+    command = "sudo tar -czf ${path.cwd}/../backup/${self.name} /mnt/docker/mnt/docker-desktop-disk/data/docker/volumes/${self.name}/"
+    # on_failure = continue
   }
 }
