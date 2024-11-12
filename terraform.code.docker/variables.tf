@@ -1,8 +1,3 @@
-# variable "env" {
-#   type    = string
-#   default = "dev"
-# }
-
 variable "image" {
   type        = map(map(string))
   description = "image for containers"
@@ -35,16 +30,3 @@ variable "ext_port" {
   #   error_message = "between 0 and  65535 "
   # }
 }
-
-# locals {
-#   counter_lel = length(var.ext_port[terraform.workspace])
-# }
-
-# variable "int_port" {
-#   type    = number
-#   default = 1880
-#   validation {
-#     condition     = var.int_port == 1880
-#     error_message = "internal port shuld ne 1880"
-#   }
-# }

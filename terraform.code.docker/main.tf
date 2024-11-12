@@ -1,11 +1,3 @@
-
-
-# resource "docker_image" "nodered_image" {
-#   name = var.image[terraform.workspace]
-# }
-
-
-
 module "image" {
   source   = "./modules/image"
   for_each = local.deployment
@@ -24,9 +16,3 @@ module "container" {
   external_in = each.value.ext
   volumes_in  = each.value.volumes
 }
-
-# resource "terraform_data" "dockervol" {
-#   provisioner "local-exec" {
-#     command = "mkdir nodered/ || true &&  chown 1000:1000 nodered/"
-#   }
-# }
