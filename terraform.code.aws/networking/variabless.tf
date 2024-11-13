@@ -8,3 +8,18 @@ variable "vpc_cidr" {
 variable "public_cidirs" {
   type = list(string)
 }
+
+variable "private_cidirs" {
+  type = list(string)
+}
+
+variable "public_sn_count" {
+  type = number
+}
+variable "private_sn_count" {
+  type = number
+}
+
+variable "max_subnets" {
+  type = number
+}
