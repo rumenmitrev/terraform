@@ -15,16 +15,23 @@ module "networking" {
   db_subnet_group  = true
 }
 
-module "database" {
-  source                 = "./database"
-  db_storage             = var.db_storage
-  db_engine_version      = var.db_engine_version
-  instance_class         = var.instance_class
-  dbname                 = var.dbname
-  dbuser                 = var.dbuser
-  dbpass                 = var.dbpass
-  skip_final_snapshot    = var.skip_final_snapshot
-  db_subnet_group_name   = module.networking.db_subnet_group_name[0]
-  vpc_security_group_ids = module.networking.db_security_group
-  db_identifier          = var.db_identifier
+# module "database" {
+#   source                 = "./database"
+#   db_storage             = var.db_storage
+#   db_engine_version      = var.db_engine_version
+#   instance_class         = var.instance_class
+#   dbname                 = var.dbname
+#   dbuser                 = var.dbuser
+#   dbpass                 = var.dbpass
+#   skip_final_snapshot    = var.skip_final_snapshot
+#   db_subnet_group_name   = module.networking.db_subnet_group_name[0]
+#   vpc_security_group_ids = module.networking.db_security_group
+#   db_identifier          = var.db_identifier
+# }
+
+
+module "alb" {
+  source         = "./alb"
+  public_sg      = module.networking.public_sg
+  public_subnets = module.networking.public_subnets
 }
