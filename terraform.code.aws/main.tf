@@ -34,4 +34,11 @@ module "alb" {
   source         = "./alb"
   public_sg      = module.networking.public_sg
   public_subnets = module.networking.public_subnets
+  vpc_id = module.networking.vpc_id
+  tg_protocol = "HTTP"
+  tg_port = "80"
+  lb_healthy_tresh = 2
+  lb_unhealthy_tresh = 2
+  lb_interval = 30
+  lb_timeout = 3
 }
