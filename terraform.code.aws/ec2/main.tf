@@ -12,10 +12,13 @@ data "aws_ami" "server_ami" {
 resource "random_id" "rm_node_id" {
   byte_length = 2
   count       = var.instance_count
+  keepers = {
+    key_name = var.key_name
+  }
 }
 
 resource "aws_key_pair" "spot-key" {
-  key_name = var.key_name
+  key_name   = var.key_name
   public_key = file(var.key_path)
 }
 
@@ -28,7 +31,15 @@ resource "aws_instance" "rm_node" {
   }
   vpc_security_group_ids = var.public_sg
   subnet_id              = var.public_subnets[count.index]
-  user_data = ""
+  user_data = templatefile(var.userdata_path,
+    {
+      nodename    = "rm-node-${random_id.rm_node_id[count.index].dec}"
+      db_endpoint = var.db_endpoint
+      dbuser      = var.dbuser
+      dbpass      = var.dbpass
+      dbname      = var.dbname
+    }
+  )
   key_name = aws_key_pair.spot-key.id
   root_block_device {
     volume_size = var.volume_size
