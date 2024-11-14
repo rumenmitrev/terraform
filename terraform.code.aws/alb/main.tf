@@ -8,14 +8,18 @@ resource "aws_lb" "rm_lb" {
 }
 
 resource "aws_lb_target_group" "rm-aws_lb_target_group" {
-  name = "rm-lb-tg-${substr(uuid(), 0, 3)}"
-  port = var.tg_port
-  protocol = var.tg_protocol
-  vpc_id = var.vpc_id
-  health_check {
-    healthy_threshold = var.lb_healthy_tresh
-    unhealthy_threshold = var.lb_unhealthy_tresh
-    timeout = var.lb_timeout
-    interval = var.lb_interval
+  for_each = var.target_groups
+  name     = each.value.name
+  port     = each.value.port
+  protocol = each.value.protocol
+  vpc_id   = var.vpc_id
+  dynamic "health_check" {
+    for_each = [each.value.health_check]
+    content {
+      healthy_threshold   = health_check.value.healthy_threshold
+      unhealthy_threshold = health_check.value.unhealthy_threshold
+      timeout             = health_check.value.timeout
+      interval            = health_check.value.interval
+    }
   }
 }
