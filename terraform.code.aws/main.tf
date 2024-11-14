@@ -30,10 +30,21 @@ module "networking" {
 # }
 
 
-module "alb" {
-  source         = "./alb"
+# module "alb" {
+#   source         = "./alb"
+#   public_sg      = module.networking.public_sg
+#   public_subnets = module.networking.public_subnets
+#   vpc_id         = module.networking.vpc_id
+#   target_groups  = local.target_groups
+# }
+
+module "ec2" {
+  source         = "./ec2"
   public_sg      = module.networking.public_sg
   public_subnets = module.networking.public_subnets
-  vpc_id         = module.networking.vpc_id
-  target_groups  = local.target_groups
+  volume_size    = 10
+  instance_count = 1
+  instance_type  = "t3.micro"
+  key_name = "rmkey"
+  key_path = "/home/rmitrev/.ssh/id_rsa.pub"
 }

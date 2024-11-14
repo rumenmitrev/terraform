@@ -9,8 +9,14 @@ resource "random_integer" "random" {
   max = 100
 }
 
+locals {
+  # Filter out 'us-east-1e' from the available AZs
+  exclude_azs  = ["us-east-1e"]
+  filtered_azs = [for az in data.aws_availability_zones.available.names : az if !contains(local.exclude_azs, az)]
+}
+
 resource "random_shuffle" "az_list" {
-  input        = data.aws_availability_zones.available.names
+  input        = local.filtered_azs
   result_count = var.max_subnets
 }
 
