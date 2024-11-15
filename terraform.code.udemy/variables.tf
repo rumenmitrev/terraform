@@ -25,3 +25,6 @@ variable "ec2_user" {
   type    = string
   default = "ubuntu"
 }
+variable "my_ip" {
+  type = string
+}

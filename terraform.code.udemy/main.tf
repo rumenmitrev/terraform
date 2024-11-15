@@ -22,9 +22,11 @@ resource "aws_key_pair" "ec2-key-pair" {
 }
 
 resource "aws_instance" "example" {
-  count             = 1
-  availability_zone = data.aws_availability_zones.available.names[1]
-  ami               = data.aws_ami.server_ami.id # use datasource
+  count                  = 2
+  availability_zone      = data.aws_availability_zones.available.names[1]
+  ami                    = data.aws_ami.server_ami.id # use datasource
+  vpc_security_group_ids = [aws_security_group.sg-custom_us_east.id]
+
   #ami           = lookup(var.amis, var.aws_region) # use lookup function to search in map structure
   key_name      = aws_key_pair.ec2-key-pair.key_name
   instance_type = "t2.micro"
@@ -38,20 +40,30 @@ resource "aws_instance" "example" {
     }
   }
 
-  provisioner "file" {
-    source      = "./install_nginx.sh"
-    destination = "/tmp/install_nginx.sh"
+  provisioner "local-exec" {
+    command = "echo ${self.id}:${self.public_ip} >> public_ip.txt"
+    when    = create
   }
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x /tmp/install_nginx.sh",
-      "sudo /tmp/install_nginx.sh"
-    ]
+
+  provisioner "local-exec" {
+    command = "rm -f  public_ip.txt"
+    when    = destroy
   }
-  connection {
-    host        = self.public_dns
-    type        = "ssh"
-    user        = var.ec2_user
-    private_key = file(var.private_key_path)
-  }
+
+  # provisioner "file" {
+  #   source      = "./install_nginx.sh"
+  #   destination = "/tmp/install_nginx.sh"
+  # }
+  # provisioner "remote-exec" {
+  #   inline = [
+  #     "chmod +x /tmp/install_nginx.sh",
+  #     "sudo /tmp/install_nginx.sh"
+  #   ]
+  # }
+  # connection {
+  #   host        = self.public_dns
+  #   type        = "ssh"
+  #   user        = var.ec2_user
+  #   private_key = file(var.private_key_path)
+  # }
 }
