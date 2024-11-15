@@ -1,9 +1,18 @@
+
+data "aws_availability_zones" "available" {
+
+}
+
 data "aws_ami" "server_ami" {
   most_recent = true
   owners      = ["099720109477"]
   filter {
     name   = "name"
     values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
   }
 }
 
@@ -13,9 +22,10 @@ resource "aws_key_pair" "ec2-key-pair" {
 }
 
 resource "aws_instance" "example" {
-  count = 1
-  #   ami           = data.aws_ami.server_ami.id  # use datasource
-  ami           = lookup(var.amis, var.aws_region) # use lookup function to search in map structure
+  count             = 1
+  availability_zone = data.aws_availability_zones.available.names[1]
+  ami               = data.aws_ami.server_ami.id # use datasource
+  #ami           = lookup(var.amis, var.aws_region) # use lookup function to search in map structure
   key_name      = aws_key_pair.ec2-key-pair.key_name
   instance_type = "t2.micro"
   tags = {
